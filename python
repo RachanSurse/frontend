@@ -1,0 +1,41 @@
+from pFET import pFET
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Define parameters for the pFET
+Vdd = 5.0  # Supply voltage in volts
+Vth = -1.0 # Threshold voltage in volts
+K = 0.5    # Transconductance parameter in mA/V^2
+
+# Define parameters for voltage divider
+R1 = 10.0  # Resistor 1 in ohms
+R2 = 10.0  # Resistor 2 in ohms
+R_load = 100.0  # Load resistor in ohms
+
+# Define range of gate-source voltages
+Vgs_values = np.linspace(0.1, 3.0, 100)
+
+# Initialize lists to store output voltages
+V_out = []
+
+# Iterate over different gate-source voltages
+for Vgs in Vgs_values:
+    # Create a pFET object with the defined parameters
+    pfet = pFET(Vdd, Vgs, Vth, K)
+    
+    # Calculate the resistance of the pFET
+    R_pfet = 1 / pfet.conductance()
+    
+    # Calculate the total resistance in the voltage divider circuit
+    R_total = R1 + R2 + R_pfet
+    
+    # Calculate the output voltage using voltage divider formula
+    V_out.append((R2 * Vdd * R_load) / (R_total * (R1 + R_load)))
+
+# Plot the output voltage vs gate-source voltage
+plt.plot(Vgs_values, V_out)
+plt.title('Output Voltage vs Gate-Source Voltage')
+plt.xlabel('Gate-Source Voltage (V)')
+plt.ylabel('Output Voltage (V)')
+plt.grid(True)
+plt.show()
